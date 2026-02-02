@@ -35,7 +35,7 @@ A product belongs to one category, but can appear in multiple menus.
 
 > Diagram created with **dbdiagram.io**
 
-<img src='./docs/uml.png' width='700px' style='border-radius:8px;'/>
+<img src='./docs/UML.png' width='700px' style='border-radius:8px;'/>
 
 ---
 
