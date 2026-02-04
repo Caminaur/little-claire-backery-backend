@@ -16,10 +16,10 @@ return new class extends Migration
             $table
                 ->foreignId('product_id')
                 ->constrained('products', 'id')
-                ->cascadeOnDelete()->unique();
+                ->cascadeOnDelete();
 
             $table->string("image_url");
-            $table->unsignedSmallInteger('position')->unique();
+            $table->unsignedSmallInteger('position');
             $table->timestamps();
 
             $table->unique(['product_id', 'position']);
