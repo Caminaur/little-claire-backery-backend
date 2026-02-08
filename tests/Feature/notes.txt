@@ -1,0 +1,101 @@
+LARAVEL + PEST — FEATURE TESTS (API) CHEAT SHEET
+==============================================
+
+Este archivo resume las funciones MÁS USADAS para tests de controladores
+(API REST) en Laravel usando Pest.
+
+------------------------------------------------
+SETUP BÁSICO
+------------------------------------------------
+
+Siempre incluir:
+
+uses(RefreshDatabase::class);
+
+------------------------------------------------
+HTTP REQUESTS (API)
+------------------------------------------------
+
+GET
+- get('/url')
+- getJson('/url')
+
+POST
+- post('/url', data)
+- postJson('/url', data)
+
+PUT
+- put('/url', data)
+- putJson('/url', data)
+
+PATCH
+- patch('/url', data)
+- patchJson('/url', data)
+
+DELETE
+- delete('/url')
+- deleteJson('/url')
+
+Ejemplo:
+postJson('/api/products', [...]);
+
+------------------------------------------------
+RESPONSE ASSERTIONS
+------------------------------------------------
+
+- assertStatus(200)
+- assertStatus(201)
+- assertStatus(204)
+
+- assertJson(array)
+- assertJsonFragment(array)
+- assertJsonMissing(array)
+
+- assertJsonCount(number)
+- assertJsonStructure(array)
+
+Ejemplo:
+getJson('/api/products')
+    ->assertStatus(200)
+    ->assertJsonCount(2);
+
+------------------------------------------------
+DATABASE ASSERTIONS
+------------------------------------------------
+
+- assertDatabaseHas('table', array)
+- assertDatabaseMissing('table', array)
+- assertDatabaseCount('table', number)
+
+Ejemplo:
+assertDatabaseHas('products', [
+    'name' => 'Latte'
+]);
+
+------------------------------------------------
+FACTORIES
+------------------------------------------------
+
+- Model::factory()->create()
+- Model::factory()->count(3)->create()
+- Model::factory()->make()
+
+Ejemplo:
+$category = Category::factory()->create();
+
+------------------------------------------------
+AUTH (CUANDO USES SANCTUM)
+------------------------------------------------
+
+- actingAs($user)
+- actingAs($user, 'sanctum')
+
+------------------------------------------------
+NOTAS IMPORTANTES
+------------------------------------------------
+
+- Los tests NO usan tu base de datos real
+- Usan SQLite en memoria
+- Los helpers son globales (no necesitan $this)
+- Si el test pasa, el código está bien aunque el IDE se queje
+- Esto cubre ~95% de tests de controllers CRUD
