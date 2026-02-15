@@ -8,6 +8,7 @@ uses(RefreshDatabase::class);
 test('can list categories', function () {
     Category::factory()->count(2)->create();
 
+    /** @var \Tests\TestCase $this */
     $response = $this->getJson('/api/categories');
 
     $response->assertStatus(200)

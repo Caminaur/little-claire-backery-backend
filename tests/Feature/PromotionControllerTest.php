@@ -18,7 +18,6 @@ test('can create a Promotion', function () {
     $promotion = Promotion::factory()->create();
 
     $response = $this->postJson('/api/promotions', [
-        'id' => $promotion->id,
         'title' => $promotion->title,
         'description' => $promotion->description,
         'discount_type' => $promotion->discount_type,

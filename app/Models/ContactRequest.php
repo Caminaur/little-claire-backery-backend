@@ -10,13 +10,18 @@ class ContactRequest extends Model
 {
     use HasFactory;
 
+    protected $table = "contact_requests";
+
+    protected $attributes = [
+        'is_read' => false,
+    ];
+
     protected $fillable = [
         'name',
         'email',
         'phone',
         'message',
         'type',
-        'is_read'
     ];
 
     protected $casts = [
