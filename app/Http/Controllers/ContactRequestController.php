@@ -2,10 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Enums\ContactRequestType;
+use App\Http\Requests\ContactRequest\StoreContactRequest;
+use App\Http\Requests\ContactRequest\UpdateContactRequest;
 use App\Models\ContactRequest;
-use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
 
 class ContactRequestController extends Controller
 {
@@ -20,21 +19,10 @@ class ContactRequestController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreContactRequest $request)
     {
-        $data = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email',
-            'phone' => 'required|string',
-            'message' => 'string|nullable',
-            'type' => [
-                'required',
-                'string',
-                Rule::enum(ContactRequestType::class)
-            ],
-        ]);
 
-        $contactRequest = ContactRequest::create($data);
+        $contactRequest = ContactRequest::create($request->validated());
 
         return response()->json($contactRequest, 201);
     }
@@ -50,23 +38,9 @@ class ContactRequestController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, ContactRequest $contactRequest)
+    public function update(UpdateContactRequest $request, ContactRequest $contactRequest)
     {
-        $data = $request->validate([
-            'name' => 'sometimes|required|string|max:255',
-            'email' => 'sometimes|string|email',
-            'phone' => 'sometimes|string',
-            'message' => 'sometimes|string|nullable',
-            'type' => [
-                'required',
-                'string',
-                Rule::enum(ContactRequestType::class)
-            ],
-            'is_read' => 'sometimes|boolean',
-        ]);
-
-        $contactRequest->update($data);
-
+        $contactRequest->update($request->validated());
         return response()->json($contactRequest, 200);
     }
 

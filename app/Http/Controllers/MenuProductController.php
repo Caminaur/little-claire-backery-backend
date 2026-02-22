@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\MenuProduct\ReorderMenuProductRequest;
+use App\Http\Requests\MenuProduct\StoreMenuProductRequest;
+use App\Http\Requests\MenuProduct\UpdateMenuProductRequest;
 use App\Http\Resources\MenuProductResource;
 use App\Models\Menu;
 use App\Models\MenuProduct;
@@ -22,13 +25,9 @@ class MenuProductController extends Controller
     /**
      * Attach an existing product to the given menu.
      */
-    public function store(Request $request, Menu $menu)
+    public function store(StoreMenuProductRequest $request, Menu $menu)
     {
-        $data = $request->validate([
-            'product_id' => 'required|exists:products,id',
-            'position' => 'required|integer|min:1',
-            'custom_price' => 'nullable|numeric|min:0',
-        ]);
+        $data = $request->validated();
 
         $exists = MenuProduct::where('menu_id', $menu->id)
             ->where('product_id', $data['product_id'])
@@ -53,13 +52,9 @@ class MenuProductController extends Controller
     /**
      * Reorder products inside a menu.
      */
-    public function reorder(Request $request, Menu $menu)
+    public function reorder(ReorderMenuProductRequest $request, Menu $menu)
     {
-        $data = $request->validate([
-            'products' => 'required|array',
-            'products.*.id' => 'required|exists:products,id',
-            'products.*.position' => 'required|integer|min:1',
-        ]);
+        $data = $request->validated();
 
         foreach ($data['products'] as $item) {
             MenuProduct::where('menu_id', $menu->id)
@@ -73,11 +68,9 @@ class MenuProductController extends Controller
     /**
      * Update custom price of a product inside a menu.
      */
-    public function update(Request $request, Menu $menu, Product $product)
+    public function update(updateMenuProductRequest $request, Menu $menu, Product $product)
     {
-        $data = $request->validate([
-            'custom_price' => 'nullable|numeric|min:0',
-        ]);
+        $data = $request->validated();
 
         MenuProduct::where('menu_id', $menu->id)
             ->where('product_id', $product->id)

@@ -2,11 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Resources\MenuCategoryResource;
 use App\Models\Category;
 use App\Models\Menu;
 use App\Models\MenuCategory;
-use Illuminate\Http\Request;
+use App\Http\Resources\MenuCategoryResource;
+
+use App\Http\Requests\MenuCategory\ReorderMenuCategoryRequest;
+use App\Http\Requests\MenuCategory\StoreMenuCategoryRequest;
+use App\Services\MenuCategoryReorderService;
+
 
 class MenuCategoryController extends Controller
 {
@@ -24,12 +28,9 @@ class MenuCategoryController extends Controller
     /**
      * Attach an existing category to the given menu.
      */
-    public function store(Request $request, Menu $menu)
+    public function store(StoreMenuCategoryRequest $request, Menu $menu)
     {
-        $data = $request->validate([
-            'category_id' => 'required|exists:categories,id',
-            'position' => 'required|integer|min:1',
-        ]);
+        $data = $request->validated();
 
         // Prevent duplicates
         $exists = MenuCategory::where('menu_id', $menu->id)
@@ -54,20 +55,9 @@ class MenuCategoryController extends Controller
     /**
      * Reorder categories inside a menu.
      */
-    public function reorder(Request $request, Menu $menu)
+    public function reorder(ReorderMenuCategoryRequest $request, Menu $menu, MenuCategoryReorderService $service)
     {
-        $data = $request->validate([
-            'categories' => 'required|array',
-            'categories.*.id' => 'required|exists:categories,id',
-            'categories.*.position' => 'required|integer|min:1',
-        ]);
-
-        foreach ($data['categories'] as $item) {
-            MenuCategory::where('menu_id', $menu->id)
-                ->where('category_id', $item['id'])
-                ->update(['position' => $item['position']]);
-        }
-
+        $service->reorder($menu, $request->validated()['categories']);
         return response()->noContent();
     }
 
