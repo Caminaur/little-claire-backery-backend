@@ -7,9 +7,10 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\PromotionController;
 use App\Http\Controllers\MenuCategoryController;
 use App\Http\Controllers\MenuProductController;
-use App\Models\ContactRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AdminAuthController;
+
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -25,11 +26,6 @@ Route::post('contact-requests', [ContactRequestController::class, 'store']);
 Route::apiResource('contact-requests', ContactRequestController::class)
     ->only(['index', 'show', 'update', 'destroy']);
 
-// Route::middleware('auth:sanctum')->group(function () {
-//     Route::apiResource('contact-requests', ContactRequestController::class)
-//         ->only(['index','show','update','destroy']);
-// });
-
 Route::prefix('menus/{menu}')->group(function () {
     Route::get('categories', [MenuCategoryController::class, 'index']);
     Route::post('categories', [MenuCategoryController::class, 'store']);
@@ -43,8 +39,10 @@ Route::prefix('menus/{menu}')->group(function () {
     Route::delete('products/{product}', [MenuProductController::class, 'destroy']);
 });
 
-
-// Route::prefix('promotions/{promotion}')->group(function () {
-//     Route::post('products', [PromotionProductController::class, 'store']);
-//     Route::delete('products/{product}', [PromotionProductController::class, 'destroy']);
-// });
+Route::prefix('admin')->group(function () {
+    Route::post('/login', [AdminAuthController::class, 'login']);
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::get('/me', [AdminAuthController::class, 'me']);
+        Route::post('/logout', [AdminAuthController::class, 'logout']);
+    });
+});

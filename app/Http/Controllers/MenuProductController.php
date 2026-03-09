@@ -9,6 +9,7 @@ use App\Http\Resources\MenuProductResource;
 use App\Models\Menu;
 use App\Models\MenuProduct;
 use App\Models\Product;
+use App\Services\MenuProductReorderService;
 use Illuminate\Http\Request;
 
 class MenuProductController extends Controller
@@ -52,16 +53,9 @@ class MenuProductController extends Controller
     /**
      * Reorder products inside a menu.
      */
-    public function reorder(ReorderMenuProductRequest $request, Menu $menu)
+    public function reorder(ReorderMenuProductRequest $request, Menu $menu, MenuProductReorderService $service)
     {
-        $data = $request->validated();
-
-        foreach ($data['products'] as $item) {
-            MenuProduct::where('menu_id', $menu->id)
-                ->where('product_id', $item['id'])
-                ->update(['position' => $item['position']]);
-        }
-
+        $service->reorder($menu, $request->validated()['products']);
         return response()->noContent();
     }
 
@@ -78,6 +72,7 @@ class MenuProductController extends Controller
 
         return response()->noContent();
     }
+
 
     /**
      * Detach a product from the given menu.
