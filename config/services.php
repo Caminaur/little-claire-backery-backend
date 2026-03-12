@@ -35,4 +35,9 @@ return [
         ],
     ],
 
+    'browsershot' => [
+        'node' => env('BROWSERSHOT_NODE_PATH'),
+        'npm' => env('BROWSERSHOT_NPM_PATH'),
+        'chrome' => env('BROWSERSHOT_CHROME_PATH'),
+    ],
 ];
