@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 280 30" fill="none">
+  <defs>
+    <linearGradient id="fade" x1="0" y1="0" x2="213" y2="0" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#b98d2d" stop-opacity="0"/>
+      <stop offset="38%" stop-color="#b98d2d" stop-opacity="1"/>
+    </linearGradient>
+  </defs>
+  <!-- línea principal -->
+  <line x1="0" y1="15" x2="213" y2="15" stroke="url(#fade)" stroke-width="3.6"/>
+  <!-- diamante -->
+  <path d="M213,10 L219,15 L213,20 L207,15 Z" fill="#b98d2d"/>
+  <!-- voluta superior principal -->
+  <path d="M219,15 C226,15 233,8.5 232,5 C231,1.5 227,1.5 225,4.5 C223,7.5 225.5,13 231,13.5 C236.5,14 242,10.5 244,8"
+        stroke="#b98d2d" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- contra-rulo inferior -->
+  <path d="M219,15 C224,15 227.5,19 226.5,21.5 C225.5,24 222,23.5 222.5,21"
+        stroke="#b98d2d" stroke-width="2.2" stroke-linecap="round" opacity="0.75"/>
+  <!-- pequeño tallo final -->
+  <path d="M244,8 C245.5,6.5 247.5,7 248,9"
+        stroke="#b98d2d" stroke-width="2" stroke-linecap="round" opacity="0.6"/>
+</svg>
