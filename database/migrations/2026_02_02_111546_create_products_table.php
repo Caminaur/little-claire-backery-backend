@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('category_id')->nullable()->constrained('categories', 'id')->nullOnDelete();
             $table->string('name');
             $table->string('description')->nullable();
-            $table->decimal('price', 10, 2);
+            // price lives in product_variants — each product can have one or more variants
             $table->boolean('is_active')->default(true);
             $table->timestamps();
         });

@@ -22,8 +22,7 @@ return new class extends Migration
 
             $table->unsignedSmallInteger('position');
 
-            $table->decimal('custom_price', 10, 2)->nullable();
-
+            // custom_price removed: prices are owned by product_variants
             $table->unique(['menu_id', 'product_id']); // evitamos duplicar producto en el menu
         });
     }

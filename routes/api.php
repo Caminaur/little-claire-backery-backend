@@ -4,6 +4,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ContactRequestController;
 use App\Http\Controllers\MenuController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ProductVariantController;
 use App\Http\Controllers\PromotionController;
 use App\Http\Controllers\MenuCategoryController;
 use App\Http\Controllers\MenuProductController;
@@ -18,6 +19,7 @@ Route::get('/user', function (Request $request) {
 
 Route::apiResource('categories', CategoryController::class)->only(['index', 'show', 'store', 'update', 'destroy']);
 Route::apiResource('products', ProductController::class);
+Route::apiResource('products/{product}/variants', ProductVariantController::class);
 Route::apiResource('promotions', PromotionController::class);
 Route::apiResource('menus', MenuController::class);
 

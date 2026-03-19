@@ -13,15 +13,18 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             AdminSeeder::class,
-            CategorySeeder::class,
-            ProductSeeder::class,
-            ProductImageSeeder::class,
-            MenuSeeder::class,
-            MenuCategorySeeder::class,
-            MenuProductSeeder::class,
-            PromotionSeeder::class,
-            PromotionProductSeeder::class,
-            ContactRequestSeeder::class,
+            // Datos de prueba (fake)
+            // CategorySeeder::class,
+            // ProductSeeder::class,
+            // ProductImageSeeder::class,
+            // MenuSeeder::class,
+            // MenuCategorySeeder::class,
+            // MenuProductSeeder::class,
+            // PromotionSeeder::class,
+            // PromotionProductSeeder::class,
+            // ContactRequestSeeder::class,
+            // Datos reales del menú Little Claire
+            RealDataSeeder::class,
         ]);
     }
 }

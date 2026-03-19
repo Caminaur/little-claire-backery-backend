@@ -11,11 +11,11 @@ use Spatie\Browsershot\Browsershot;
 
 class GenerateMenuPdfService
 {
-    public function handle(Menu $menu): array
+    public function buildData(Menu $menu): array
     {
         $menu->load([
-            'categories.products.images',
-            'products',
+            'categories',
+            'products.variants.images',
         ]);
 
         $menuProducts = $menu->products->keyBy('id');
@@ -28,52 +28,72 @@ class GenerateMenuPdfService
                         return $product->category_id === $category->id && $product->is_active;
                     })
                     ->map(function ($product) {
+                        $variants = $product->variants
+                            ->where('is_active', true)
+                            ->sortBy('position')
+                            ->map(fn($v) => [
+                                'label'  => $v->label,
+                                'price'  => $v->price,
+                                'images' => $v->images
+                                    ->sortBy('position')
+                                    ->map(fn($image) => [
+                                        'id'       => $image->id,
+                                        'url'      => $image->image_url,
+                                        'position' => $image->position,
+                                        'pdf_src'  => $this->resolvePdfImageSrc($image->image_url),
+                                    ])
+                                    ->values()
+                                    ->all(),
+                            ])
+                            ->values()
+                            ->all();
 
                         return [
-                            'id' => $product->id,
-                            'name' => $product->name,
+                            'id'          => $product->id,
+                            'name'        => $product->name,
                             'description' => $product->description,
-                            'price' => $product->price,
-                            'custom_price' => $product->pivot->custom_price,
-                            'final_price' => $product->pivot->custom_price ?? $product->price,
-                            'position' => $product->pivot->position,
-                            'images' => $product->images
-                                ->sortBy('position')
-                                ->map(function ($image) {
-                                    return [
-                                        'id' => $image->id,
-                                        'url' => $image->image_url,
-                                        'position' => $image->position,
-                                        'pdf_src' => $this->resolvePdfImageSrc($image->image_url),
-                                    ];
-                                })
-                                ->values()
-                                ->all(),
+                            'position'    => $product->pivot->position,
+                            'variants'    => $variants,
                         ];
                     })
                     ->sortBy('position')
                     ->values()
                     ->all();
 
+                if (empty($products)) {
+                    return null;
+                }
+
                 return [
-                    'id' => $category->id,
-                    'name' => $category->name,
+                    'id'          => $category->id,
+                    'name'        => $category->name,
                     'description' => $category->description ?? null,
-                    'position' => $category->pivot->position ?? null,
-                    'products' => $products,
+                    'position'    => $category->pivot->position ?? null,
+                    'products'    => $products,
                 ];
             })
+            ->filter()
             ->sortBy('position')
             ->values()
             ->all();
 
-        $data = [
-            'id' => $menu->id,
-            'name' => $menu->name,
+        return [
+            'id'          => $menu->id,
+            'name'        => $menu->name,
             'description' => $menu->description,
-            'is_active' => $menu->is_active,
-            'categories' => $categories,
+            'is_active'   => $menu->is_active,
+            'categories'  => $categories,
+            'assets'      => [
+                'logo'    => $this->resolvePublicAsset('logo-little-claire.png'),
+                'qr_code' => $this->resolvePublicAsset('qr-code.png'),
+                'divider' => $this->resolvePublicAsset('divider-line.svg'),
+            ],
         ];
+    }
+
+    public function handle(Menu $menu): array
+    {
+        $data = $this->buildData($menu);
 
         $html = View::make('pdf.menu', [
             'data' => $data,
@@ -116,6 +136,25 @@ class GenerateMenuPdfService
             'exists' => File::exists($absolutePath),
             'size' => File::exists($absolutePath) ? File::size($absolutePath) : 0,
         ];
+    }
+
+    private function resolvePublicAsset(string $filename): ?string
+    {
+        $path = public_path('pdf-assets/' . $filename);
+
+        if (!File::exists($path)) {
+            return null;
+        }
+
+        $ext  = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
+        $mime = match ($ext) {
+            'svg'  => 'image/svg+xml',
+            'png'  => 'image/png',
+            'jpg', 'jpeg' => 'image/jpeg',
+            default => 'application/octet-stream',
+        };
+
+        return 'data:' . $mime . ';base64,' . base64_encode(File::get($path));
     }
 
     private function resolvePdfImageSrc(?string $imageUrl): ?string
@@ -161,6 +200,13 @@ class GenerateMenuPdfService
 
                 return 'data:' . $mime . ';base64,' . base64_encode($contents);
             }
+        }
+
+        // Caso 3: path relativo dentro de public/ (e.g. "/product-images/foo.png")
+        $publicPath = public_path($normalizedPath);
+        if (File::exists($publicPath)) {
+            $mime = File::mimeType($publicPath) ?: 'image/png';
+            return 'data:' . $mime . ';base64,' . base64_encode(File::get($publicPath));
         }
 
         return $imageUrl;

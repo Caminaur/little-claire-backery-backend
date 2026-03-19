@@ -7,21 +7,21 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class MenuProductResource extends JsonResource
 {
-    /**
-     * Transform the resource into an array.
-     *
-     * @return array<string, mixed>
-     */
     public function toArray(Request $request): array
     {
         return [
             'id' => $this->id,
             'name' => $this->name,
             'description' => $this->description,
-            'price' => $this->price,
             'is_active' => $this->is_active,
             'position' => $this->pivot->position,
-            'custom_price' => $this->pivot->custom_price,
+            'variants' => $this->variants->map(fn($v) => [
+                'id' => $v->id,
+                'label' => $v->label,
+                'price' => $v->price,
+                'position' => $v->position,
+                'is_active' => $v->is_active,
+            ]),
         ];
     }
 }

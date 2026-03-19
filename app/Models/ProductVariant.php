@@ -5,28 +5,33 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class MenuProduct extends Model
+class ProductVariant extends Model
 {
     use HasFactory;
 
-    protected $table = 'menu_products';
-
-    public $timestamps = false;
-
     protected $fillable = [
-        'menu_id',
         'product_id',
+        'label',
+        'price',
         'position',
+        'is_active',
     ];
 
-    public function menu(): BelongsTo
-    {
-        return $this->belongsTo(Menu::class);
-    }
+    protected $casts = [
+        'price' => 'decimal:2',
+        'is_active' => 'boolean',
+    ];
 
     public function product(): BelongsTo
     {
         return $this->belongsTo(Product::class);
+    }
+
+    public function images(): HasMany
+    {
+        return $this->hasMany(ProductImage::class)
+            ->orderBy('position');
     }
 }

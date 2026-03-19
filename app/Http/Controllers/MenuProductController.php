@@ -10,16 +10,17 @@ use App\Models\Menu;
 use App\Models\MenuProduct;
 use App\Models\Product;
 use App\Services\MenuProductReorderService;
-use Illuminate\Http\Request;
 
 class MenuProductController extends Controller
 {
     /**
      * List all products configured for the given menu,
-     * including pivot position and custom price.
+     * including their variants.
      */
     public function index(Menu $menu)
     {
+        $menu->load('products.variants');
+
         return MenuProductResource::collection($menu->products);
     }
 
@@ -44,7 +45,6 @@ class MenuProductController extends Controller
             'menu_id' => $menu->id,
             'product_id' => $data['product_id'],
             'position' => $data['position'],
-            'custom_price' => $data['custom_price'],
         ]);
 
         return response()->json($menuProduct, 201);
@@ -56,23 +56,18 @@ class MenuProductController extends Controller
     public function reorder(ReorderMenuProductRequest $request, Menu $menu, MenuProductReorderService $service)
     {
         $service->reorder($menu, $request->validated()['products']);
+
         return response()->noContent();
     }
 
     /**
-     * Update custom price of a product inside a menu.
+     * custom_price was removed; this endpoint is kept for route compatibility
+     * but no longer has anything to update.
      */
-    public function update(updateMenuProductRequest $request, Menu $menu, Product $product)
+    public function update(UpdateMenuProductRequest $request, Menu $menu, Product $product)
     {
-        $data = $request->validated();
-
-        MenuProduct::where('menu_id', $menu->id)
-            ->where('product_id', $product->id)
-            ->update(['custom_price' => $data['custom_price']]);
-
         return response()->noContent();
     }
-
 
     /**
      * Detach a product from the given menu.

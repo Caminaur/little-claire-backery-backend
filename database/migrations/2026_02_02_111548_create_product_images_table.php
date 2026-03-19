@@ -14,15 +14,15 @@ return new class extends Migration
         Schema::create('product_images', function (Blueprint $table) {
             $table->id();
             $table
-                ->foreignId('product_id')
-                ->constrained('products', 'id')
+                ->foreignId('product_variant_id')
+                ->constrained('product_variants', 'id')
                 ->cascadeOnDelete();
 
-            $table->string("image_url");
+            $table->string('image_url');
             $table->unsignedSmallInteger('position');
             $table->timestamps();
 
-            $table->unique(['product_id', 'position']);
+            $table->unique(['product_variant_id', 'position']);
         });
     }
 

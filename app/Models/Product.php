@@ -16,12 +16,10 @@ class Product extends Model
         'category_id',
         'name',
         'description',
-        'price',
         'is_active',
     ];
 
     protected $casts = [
-        'price' => 'decimal:2',
         'is_active' => 'boolean',
     ];
 
@@ -30,16 +28,16 @@ class Product extends Model
         return $this->belongsTo(Category::class);
     }
 
-    public function images(): HasMany
+public function variants(): HasMany
     {
-        return $this->hasMany(ProductImage::class)
+        return $this->hasMany(ProductVariant::class)
             ->orderBy('position');
     }
 
     public function menus(): BelongsToMany
     {
         return $this->belongsToMany(Menu::class, 'menu_products')
-            ->withPivot(['position', 'custom_price'])
+            ->withPivot(['position'])
             ->orderByPivot('position');
     }
 }

@@ -18,3 +18,9 @@ Route::get('/test-menu-pdf/{menu}', function (Menu $menu, GenerateMenuPdfService
         'public_url' => asset("storage/menus/menu-{$menu->id}.pdf"),
     ]);
 });
+
+// Preview del Blade del menú directamente en el navegador (sin generar PDF)
+Route::get('/preview-menu/{menu}', function (Menu $menu, GenerateMenuPdfService $service) {
+    $data = $service->buildData($menu);
+    return view('pdf.menu', ['data' => $data]);
+});

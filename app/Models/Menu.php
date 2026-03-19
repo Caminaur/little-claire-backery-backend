@@ -32,7 +32,7 @@ class Menu extends Model
     public function products(): BelongsToMany
     {
         return $this->belongsToMany(Product::class, 'menu_products')
-            ->withPivot(['position', 'custom_price'])
+            ->withPivot(['position'])
             ->orderByPivot('position');
     }
 }
