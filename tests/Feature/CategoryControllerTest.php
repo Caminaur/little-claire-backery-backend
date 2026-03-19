@@ -1,14 +1,18 @@
 <?php
 
+use App\Models\Admin;
 use App\Models\Category;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
 
+beforeEach(function () {
+    $this->actingAs(Admin::factory()->create());
+});
+
 test('can list categories', function () {
     Category::factory()->count(2)->create();
 
-    /** @var \Tests\TestCase $this */
     $response = $this->getJson('/api/categories');
 
     $response->assertStatus(200)
@@ -28,8 +32,6 @@ test('can create category', function () {
         'name' => 'Coffee',
     ]);
 });
-
-uses(RefreshDatabase::class);
 
 test('can update category', function () {
     $category = Category::factory()->create([

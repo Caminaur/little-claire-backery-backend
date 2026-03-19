@@ -1,11 +1,16 @@
 <?php
 
+use App\Models\Admin;
 use App\Models\Menu;
 use App\Models\MenuProduct;
 use App\Models\Product;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
+
+beforeEach(function () {
+    $this->actingAs(Admin::factory()->create());
+});
 
 test('can list products of a menu', function () {
     $menu = Menu::factory()->create();
@@ -16,7 +21,6 @@ test('can list products of a menu', function () {
             'menu_id' => $menu->id,
             'product_id' => $product->id,
             'position' => $index + 1,
-            'custom_price' => null,
         ]);
     }
 
@@ -33,7 +37,6 @@ test('can attach product to menu', function () {
     $response = $this->postJson("/api/menus/{$menu->id}/products", [
         'product_id' => $product->id,
         'position' => 1,
-        'custom_price' => 9.99,
     ]);
 
     $response->assertStatus(201);
@@ -44,7 +47,6 @@ test('can attach product to menu', function () {
     ]);
 });
 
-
 test('can reorder products inside menu', function () {
     $menu = Menu::factory()->create();
     $products = Product::factory()->count(2)->create();
@@ -54,7 +56,6 @@ test('can reorder products inside menu', function () {
             'menu_id' => $menu->id,
             'product_id' => $product->id,
             'position' => $index + 1,
-            'custom_price' => null,
         ]);
     }
 
@@ -80,7 +81,7 @@ test('can reorder products inside menu', function () {
     ]);
 });
 
-test('can update custom price of product in menu', function () {
+test('PUT product in menu is a no-op and returns 204', function () {
     $menu = Menu::factory()->create();
     $product = Product::factory()->create();
 
@@ -88,18 +89,9 @@ test('can update custom price of product in menu', function () {
         'menu_id' => $menu->id,
         'product_id' => $product->id,
         'position' => 1,
-        'custom_price' => null,
     ]);
 
-    $response = $this->putJson("/api/menus/{$menu->id}/products/{$product->id}", [
-        'custom_price' => 12.50,
-    ]);
+    $response = $this->putJson("/api/menus/{$menu->id}/products/{$product->id}", []);
 
     $response->assertStatus(204);
-
-    $this->assertDatabaseHas('menu_products', [
-        'menu_id' => $menu->id,
-        'product_id' => $product->id,
-        'custom_price' => 12.50,
-    ]);
 });

@@ -1,11 +1,14 @@
 <?php
 
+use App\Models\Admin;
 use App\Models\ContactRequest;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
 
-test('Make a couple Requests', function () {
+test('admin can list contact requests', function () {
+    $this->actingAs(Admin::factory()->create());
+
     ContactRequest::factory(22)->create();
 
     $response = $this->getJson('/api/contact-requests');
@@ -14,7 +17,6 @@ test('Make a couple Requests', function () {
 });
 
 test('Fail on invalid ENUM value', function () {
-
     $response = $this->postJson('/api/contact-requests', [
         "name" => "recusandae",
         "email" => "gleason.estefania@yahoo.com",
@@ -23,18 +25,15 @@ test('Fail on invalid ENUM value', function () {
         "type" => "Spontaneus",
     ]);
 
-
     $response->assertStatus(422)->assertJsonValidationErrors('type');
 });
 
 test('Fail when name and email are missing', function () {
-
     $response = $this->postJson('/api/contact-requests', [
         "phone" => "(949) 928-4663",
         "message" => "",
         "type" => "catering",
     ]);
-
 
     $response->assertStatus(422)->assertJsonValidationErrors(['name', 'email']);
 });

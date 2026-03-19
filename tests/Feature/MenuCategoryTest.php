@@ -1,11 +1,16 @@
 <?php
 
+use App\Models\Admin;
 use App\Models\Category;
 use App\Models\Menu;
 use App\Models\MenuCategory;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
+
+beforeEach(function () {
+    $this->actingAs(Admin::factory()->create());
+});
 
 test('can list categories of a menu', function () {
     $menu = Menu::factory()->create();
@@ -24,7 +29,6 @@ test('can list categories of a menu', function () {
     $response->assertStatus(200)
         ->assertJsonCount(3, 'data');
 });
-
 
 test('can attach category to menu', function () {
     $menu = Menu::factory()->create();
@@ -61,7 +65,6 @@ test('cannot attach same category twice', function () {
     $response->assertStatus(409);
 });
 
-
 test('can reorder categories in menu', function () {
     $menu = Menu::factory()->create();
     $categories = Category::factory()->count(2)->create();
@@ -89,7 +92,6 @@ test('can reorder categories in menu', function () {
         'position' => 2,
     ]);
 });
-
 
 test('can detach category from menu', function () {
     $menu = Menu::factory()->create();

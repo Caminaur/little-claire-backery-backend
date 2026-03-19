@@ -1,16 +1,19 @@
 <?php
 
+use App\Models\Admin;
 use App\Models\Category;
 use App\Models\Product;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
-
 uses(RefreshDatabase::class);
+
+beforeEach(function () {
+    $this->actingAs(Admin::factory()->create());
+});
 
 test('can list products', function () {
     Product::factory()->count(2)->create();
 
-    /** @var \Tests\TestCase $this */
     $response = $this->getJson('/api/products');
 
     $response->assertStatus(200)
@@ -20,12 +23,10 @@ test('can list products', function () {
 test('can create product', function () {
     $category = Category::factory()->create();
 
-    /** @var \Tests\TestCase $this */
     $response = $this->postJson('/api/products', [
         'category_id' => $category->id,
         'name' => 'Latte',
         'description' => null,
-        'price' => 5.5,
         'is_active' => true,
     ]);
 
@@ -48,7 +49,6 @@ test('can update product', function () {
         'category_id' => $category->id,
         'name' => 'New name',
         'description' => null,
-        'price' => 7.0,
         'is_active' => true,
     ]);
 

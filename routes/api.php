@@ -8,43 +8,50 @@ use App\Http\Controllers\ProductVariantController;
 use App\Http\Controllers\PromotionController;
 use App\Http\Controllers\MenuCategoryController;
 use App\Http\Controllers\MenuProductController;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdminAuthController;
 
-
-Route::get('/user', function (Request $request) {
-    return $request->user();
-})->middleware('auth:sanctum');
-
-Route::apiResource('categories', CategoryController::class)->only(['index', 'show', 'store', 'update', 'destroy']);
-Route::apiResource('products', ProductController::class);
-Route::apiResource('products/{product}/variants', ProductVariantController::class);
-Route::apiResource('promotions', PromotionController::class);
-Route::apiResource('menus', MenuController::class);
-
-Route::post('contact-requests', [ContactRequestController::class, 'store']);
-
-Route::apiResource('contact-requests', ContactRequestController::class)
-    ->only(['index', 'show', 'update', 'destroy']);
+// --- Públicos ---
+Route::apiResource('categories', CategoryController::class)->only(['index', 'show']);
+Route::apiResource('products', ProductController::class)->only(['index', 'show']);
+Route::apiResource('products/{product}/variants', ProductVariantController::class)->only(['index', 'show']);
+Route::apiResource('promotions', PromotionController::class)->only(['index', 'show']);
+Route::apiResource('menus', MenuController::class)->only(['index', 'show']);
 
 Route::prefix('menus/{menu}')->group(function () {
     Route::get('categories', [MenuCategoryController::class, 'index']);
-    Route::post('categories', [MenuCategoryController::class, 'store']);
-    Route::put('categories/order', [MenuCategoryController::class, 'reorder']);
-    Route::delete('categories/{category}', [MenuCategoryController::class, 'destroy']);
-
     Route::get('products', [MenuProductController::class, 'index']);
-    Route::post('products', [MenuProductController::class, 'store']);
-    Route::put('products/order', [MenuProductController::class, 'reorder']);
-    Route::put('products/{product}', [MenuProductController::class, 'update']);
-    Route::delete('products/{product}', [MenuProductController::class, 'destroy']);
 });
 
+Route::post('contact-requests', [ContactRequestController::class, 'store']);
+
+// --- Auth ---
 Route::prefix('admin')->group(function () {
     Route::post('/login', [AdminAuthController::class, 'login']);
     Route::middleware('auth:sanctum')->group(function () {
         Route::get('/me', [AdminAuthController::class, 'me']);
         Route::post('/logout', [AdminAuthController::class, 'logout']);
+    });
+});
+
+// --- Admin (requiere autenticación) ---
+Route::middleware('auth:sanctum')->group(function () {
+    Route::apiResource('categories', CategoryController::class)->only(['store', 'update', 'destroy']);
+    Route::apiResource('products', ProductController::class)->only(['store', 'update', 'destroy']);
+    Route::apiResource('products/{product}/variants', ProductVariantController::class)->only(['store', 'update', 'destroy']);
+    Route::apiResource('promotions', PromotionController::class)->only(['store', 'update', 'destroy']);
+    Route::apiResource('menus', MenuController::class)->only(['store', 'update', 'destroy']);
+
+    Route::apiResource('contact-requests', ContactRequestController::class)->only(['index', 'show', 'update', 'destroy']);
+
+    Route::prefix('menus/{menu}')->group(function () {
+        Route::post('categories', [MenuCategoryController::class, 'store']);
+        Route::put('categories/order', [MenuCategoryController::class, 'reorder']);
+        Route::delete('categories/{category}', [MenuCategoryController::class, 'destroy']);
+
+        Route::post('products', [MenuProductController::class, 'store']);
+        Route::put('products/order', [MenuProductController::class, 'reorder']);
+        Route::put('products/{product}', [MenuProductController::class, 'update']);
+        Route::delete('products/{product}', [MenuProductController::class, 'destroy']);
     });
 });

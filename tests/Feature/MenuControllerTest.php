@@ -1,9 +1,14 @@
 <?php
 
+use App\Models\Admin;
 use App\Models\Menu;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
+
+beforeEach(function () {
+    $this->actingAs(Admin::factory()->create());
+});
 
 test('can list Menus', function () {
     Menu::factory()->count(2)->create();
