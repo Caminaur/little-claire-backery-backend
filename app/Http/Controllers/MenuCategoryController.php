@@ -9,11 +9,14 @@ use App\Http\Resources\MenuCategoryResource;
 
 use App\Http\Requests\MenuCategory\ReorderMenuCategoryRequest;
 use App\Http\Requests\MenuCategory\StoreMenuCategoryRequest;
+use App\Services\GenerateMenuPdfService;
 use App\Services\MenuCategoryReorderService;
-
+use Illuminate\Support\Facades\Log;
 
 class MenuCategoryController extends Controller
 {
+    public function __construct(private GenerateMenuPdfService $pdfService) {}
+
 
     /**
      * List all categories configured for the given menu,
@@ -49,6 +52,12 @@ class MenuCategoryController extends Controller
             'position' => $data['position'],
         ]);
 
+        try {
+            $this->pdfService->handle($menu);
+        } catch (\Throwable $e) {
+            Log::error("PDF generation failed for menu {$menu->id}: {$e->getMessage()}");
+        }
+
         return response()->json($menuCategory, 201);
     }
 
@@ -58,6 +67,13 @@ class MenuCategoryController extends Controller
     public function reorder(ReorderMenuCategoryRequest $request, Menu $menu, MenuCategoryReorderService $service)
     {
         $service->reorder($menu, $request->validated()['categories']);
+
+        try {
+            $this->pdfService->handle($menu);
+        } catch (\Throwable $e) {
+            Log::error("PDF generation failed for menu {$menu->id}: {$e->getMessage()}");
+        }
+
         return response()->noContent();
     }
 
@@ -69,6 +85,12 @@ class MenuCategoryController extends Controller
         MenuCategory::where('menu_id', $menu->id)
             ->where('category_id', $category->id)
             ->delete();
+
+        try {
+            $this->pdfService->handle($menu);
+        } catch (\Throwable $e) {
+            Log::error("PDF generation failed for menu {$menu->id}: {$e->getMessage()}");
+        }
 
         return response()->noContent();
     }

@@ -5,7 +5,8 @@ namespace App\Http\Controllers;
 use App\Http\Requests\Menu\StoreMenuRequest;
 use App\Http\Requests\Menu\UpdateMenuRequest;
 use App\Models\Menu;
-use Illuminate\Http\JsonResponse;
+use App\Services\GenerateMenuPdfService;
+use Illuminate\Support\Facades\Log;
 
 class MenuController extends Controller
 {
@@ -38,9 +39,16 @@ class MenuController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateMenuRequest $request, Menu $menu)
+    public function update(UpdateMenuRequest $request, Menu $menu, GenerateMenuPdfService $pdfService)
     {
         $menu->update($request->validated());
+
+        try {
+            $pdfService->handle($menu);
+        } catch (\Throwable $e) {
+            Log::error("PDF generation failed for menu {$menu->id}: {$e->getMessage()}");
+        }
+
         return response()->json($menu, 200);
     }
 

@@ -9,10 +9,14 @@ use App\Http\Resources\MenuProductResource;
 use App\Models\Menu;
 use App\Models\MenuProduct;
 use App\Models\Product;
+use App\Services\GenerateMenuPdfService;
 use App\Services\MenuProductReorderService;
+use Illuminate\Support\Facades\Log;
 
 class MenuProductController extends Controller
 {
+    public function __construct(private GenerateMenuPdfService $pdfService) {}
+
     /**
      * List all products configured for the given menu,
      * including their variants.
@@ -47,6 +51,12 @@ class MenuProductController extends Controller
             'position' => $data['position'],
         ]);
 
+        try {
+            $this->pdfService->handle($menu);
+        } catch (\Throwable $e) {
+            Log::error("PDF generation failed for menu {$menu->id}: {$e->getMessage()}");
+        }
+
         return response()->json($menuProduct, 201);
     }
 
@@ -56,6 +66,12 @@ class MenuProductController extends Controller
     public function reorder(ReorderMenuProductRequest $request, Menu $menu, MenuProductReorderService $service)
     {
         $service->reorder($menu, $request->validated()['products']);
+
+        try {
+            $this->pdfService->handle($menu);
+        } catch (\Throwable $e) {
+            Log::error("PDF generation failed for menu {$menu->id}: {$e->getMessage()}");
+        }
 
         return response()->noContent();
     }
@@ -77,6 +93,12 @@ class MenuProductController extends Controller
         MenuProduct::where('menu_id', $menu->id)
             ->where('product_id', $product->id)
             ->delete();
+
+        try {
+            $this->pdfService->handle($menu);
+        } catch (\Throwable $e) {
+            Log::error("PDF generation failed for menu {$menu->id}: {$e->getMessage()}");
+        }
 
         return response()->noContent();
     }
