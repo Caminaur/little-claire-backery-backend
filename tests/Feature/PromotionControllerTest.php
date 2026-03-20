@@ -15,7 +15,7 @@ test('can list promotions', function () {
 
     $response = $this->getJson("/api/promotions");
 
-    $response->assertStatus(200)->assertJsonCount(5);
+    $response->assertStatus(200)->assertJsonCount(5, 'data');
 });
 
 test('can create a Promotion', function () {

@@ -27,7 +27,7 @@ test('can list products of a menu', function () {
     $response = $this->getJson("/api/menus/{$menu->id}/products");
 
     $response->assertStatus(200)
-        ->assertJsonCount(2, 'data');
+        ->assertJsonCount(2);
 });
 
 test('can attach product to menu', function () {

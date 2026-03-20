@@ -27,7 +27,7 @@ test('can list categories of a menu', function () {
     $response = $this->getJson("/api/menus/{$menu->id}/categories");
 
     $response->assertStatus(200)
-        ->assertJsonCount(3, 'data');
+        ->assertJsonCount(3);
 });
 
 test('can attach category to menu', function () {

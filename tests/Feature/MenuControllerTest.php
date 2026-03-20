@@ -16,7 +16,7 @@ test('can list Menus', function () {
     $response = $this->getJson('/api/menus');
 
     $response->assertStatus(200)
-        ->assertJsonCount(2);
+        ->assertJsonCount(2, 'data');
 });
 
 test('can create Menu', function () {

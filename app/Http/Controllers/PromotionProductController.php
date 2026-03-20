@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\PromotionProduct\StorePromotionProductRequest;
+use App\Http\Resources\ProductResource;
 use App\Models\Product;
 use App\Models\Promotion;
 
@@ -10,7 +11,7 @@ class PromotionProductController extends Controller
 {
     public function index(Promotion $promotion)
     {
-        return response()->json($promotion->products);
+        return ProductResource::collection($promotion->products);
     }
 
     public function store(StorePromotionProductRequest $request, Promotion $promotion)

@@ -16,7 +16,7 @@ test('can list categories', function () {
     $response = $this->getJson('/api/categories');
 
     $response->assertStatus(200)
-        ->assertJsonCount(2);
+        ->assertJsonCount(2, 'data');
 });
 
 test('can create category', function () {

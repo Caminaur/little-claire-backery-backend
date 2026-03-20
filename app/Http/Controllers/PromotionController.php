@@ -4,46 +4,35 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\Promotion\StorePromotionRequest;
 use App\Http\Requests\Promotion\UpdatePromotionRequest;
+use App\Http\Resources\PromotionResource;
 use App\Models\Promotion;
-use Illuminate\Http\Request;
 
 class PromotionController extends Controller
 {
     public function index()
     {
-        return Promotion::query()
-            ->orderByDesc('created_at')
-            ->get([
-                'id',
-                'title',
-                'description',
-                'discount_type',
-                'discount_value',
-                'starts_at',
-                'ends_at',
-                'is_active',
-            ]);
+        return PromotionResource::collection(
+            Promotion::query()->orderByDesc('created_at')->paginate(20)
+        );
     }
 
     public function store(StorePromotionRequest $request)
     {
         $promotion = Promotion::create($request->validated());
 
-        return response()->json($promotion, 201);
+        return (new PromotionResource($promotion))->response()->setStatusCode(201);
     }
 
     public function show(Promotion $promotion)
     {
-        return $promotion;
+        return new PromotionResource($promotion);
     }
 
     public function update(UpdatePromotionRequest $request, Promotion $promotion)
     {
-        $data = $request->validated();
+        $promotion->update($request->validated());
 
-        $promotion->update($data);
-
-        return response()->json($promotion, 200);
+        return new PromotionResource($promotion);
     }
 
     public function destroy(Promotion $promotion)
