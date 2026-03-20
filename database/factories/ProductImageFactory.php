@@ -2,7 +2,7 @@
 
 namespace Database\Factories;
 
-use App\Models\Product;
+use App\Models\ProductVariant;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -18,9 +18,9 @@ class ProductImageFactory extends Factory
     public function definition(): array
     {
         return [
-            'product_id' => Product::factory(),
+            'product_variant_id' => ProductVariant::factory(),
             'image_url' => 'https://placehold.co/600x400/png',
-            'position' => $this->faker->numberBetween(1, 5),
+            'position' => 1,
         ];
     }
 }
