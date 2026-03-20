@@ -27,11 +27,11 @@ Route::prefix('menus/{menu}')->group(function () {
     Route::get('products', [MenuProductController::class, 'index']);
 });
 
-Route::post('contact-requests', [ContactRequestController::class, 'store']);
+Route::post('contact-requests', [ContactRequestController::class, 'store'])->middleware('throttle:10,1');
 
 // --- Auth ---
 Route::prefix('admin')->group(function () {
-    Route::post('/login', [AdminAuthController::class, 'login']);
+    Route::post('/login', [AdminAuthController::class, 'login'])->middleware('throttle:5,1');
     Route::middleware('auth:sanctum')->group(function () {
         Route::get('/me', [AdminAuthController::class, 'me']);
         Route::post('/logout', [AdminAuthController::class, 'logout']);
