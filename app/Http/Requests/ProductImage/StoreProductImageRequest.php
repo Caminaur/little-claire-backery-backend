@@ -14,8 +14,8 @@ class StoreProductImageRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'image_url' => 'required|string|url|max:2048',
-            'position'  => 'required|integer|min:1',
+            'image'    => 'required|image|max:4096',
+            'position' => 'required|integer|min:1',
         ];
     }
 }

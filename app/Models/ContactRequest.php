@@ -22,6 +22,7 @@ class ContactRequest extends Model
         'phone',
         'message',
         'type',
+        'is_read',
     ];
 
     protected $casts = [

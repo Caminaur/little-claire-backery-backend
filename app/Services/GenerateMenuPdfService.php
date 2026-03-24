@@ -109,7 +109,9 @@ class GenerateMenuPdfService
         $browsershot = Browsershot::html($html)
             ->format('A4')
             ->margins(10, 10, 10, 10)
-            ->showBackground();
+            ->showBackground()
+            ->disableJavascript()
+            ->timeout(120);
 
         $nodePath = config('services.browsershot.node');
         $npmPath = config('services.browsershot.npm');
@@ -154,7 +156,14 @@ class GenerateMenuPdfService
             default => 'application/octet-stream',
         };
 
-        return 'data:' . $mime . ';base64,' . base64_encode(File::get($path));
+        $contents = File::get($path);
+
+        if (in_array($ext, ['png', 'jpg', 'jpeg'])) {
+            $contents = $this->resizeImage($contents, 440);
+            $mime = 'image/png';
+        }
+
+        return 'data:' . $mime . ';base64,' . base64_encode($contents);
     }
 
     private function resolvePdfImageSrc(?string $imageUrl): ?string
@@ -173,7 +182,8 @@ class GenerateMenuPdfService
                     $body = $response->body();
 
                     if (!empty($body)) {
-                        return 'data:' . $mime . ';base64,' . base64_encode($body);
+                        $body = $this->resizeImage($body, 128);
+                        return 'data:image/png;base64,' . base64_encode($body);
                     }
                 }
             } catch (\Throwable $e) {
@@ -195,20 +205,48 @@ class GenerateMenuPdfService
             $absolutePath = Storage::disk('public')->path($normalizedPath);
 
             if (File::exists($absolutePath)) {
-                $mime = File::mimeType($absolutePath) ?: 'image/jpeg';
-                $contents = File::get($absolutePath);
-
-                return 'data:' . $mime . ';base64,' . base64_encode($contents);
+                $contents = $this->resizeImage(File::get($absolutePath), 128);
+                return 'data:image/png;base64,' . base64_encode($contents);
             }
         }
 
         // Caso 3: path relativo dentro de public/ (e.g. "/product-images/foo.png")
         $publicPath = public_path($normalizedPath);
         if (File::exists($publicPath)) {
-            $mime = File::mimeType($publicPath) ?: 'image/png';
-            return 'data:' . $mime . ';base64,' . base64_encode(File::get($publicPath));
+            $contents = $this->resizeImage(File::get($publicPath), 128);
+            return 'data:image/png;base64,' . base64_encode($contents);
         }
 
         return $imageUrl;
+    }
+
+    private function resizeImage(string $binaryData, int $maxPx): string
+    {
+        if (!extension_loaded('gd')) return $binaryData;
+
+        $src = @imagecreatefromstring($binaryData);
+        if (!$src) return $binaryData;
+
+        $w = imagesx($src);
+        $h = imagesy($src);
+
+        if ($w <= $maxPx) {
+            imagedestroy($src);
+            return $binaryData;
+        }
+
+        $newH = (int) round($h * $maxPx / $w);
+        $dst  = imagecreatetruecolor($maxPx, $newH);
+        imagealphablending($dst, false);
+        imagesavealpha($dst, true);
+        imagecopyresampled($dst, $src, 0, 0, 0, 0, $maxPx, $newH, $w, $h);
+        imagedestroy($src);
+
+        ob_start();
+        imagepng($dst, null, 9);
+        $out = ob_get_clean();
+        imagedestroy($dst);
+
+        return $out ?: $binaryData;
     }
 }

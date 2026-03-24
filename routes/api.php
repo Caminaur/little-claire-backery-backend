@@ -40,6 +40,7 @@ Route::prefix('admin')->group(function () {
 
 // --- Admin (requiere autenticación) ---
 Route::middleware('auth:sanctum')->group(function () {
+    Route::put('categories/reorder', [CategoryController::class, 'reorder']);
     Route::apiResource('categories', CategoryController::class)->only(['store', 'update', 'destroy']);
     Route::apiResource('products', ProductController::class)->only(['store', 'update', 'destroy']);
     Route::apiResource('products/{product}/variants', ProductVariantController::class)->only(['store', 'update', 'destroy']);

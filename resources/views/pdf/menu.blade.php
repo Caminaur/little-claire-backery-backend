@@ -5,7 +5,7 @@
   <title>Menú - {{ $data['name'] }}</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@400;500;600;700;800&family=Oooh+Baby&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Oooh+Baby&display=swap" rel="stylesheet">
   <style>
     :root {
       --paper: #fbf8f1;
@@ -24,7 +24,7 @@
       padding: 0;
       background: #ece7dc;
       color: var(--ink);
-      font-family: "Inter", system-ui, sans-serif;
+      font-family: system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
       font-size: 16px;
     }
 
@@ -42,7 +42,7 @@
       width: 210mm;
       height: 297mm;
       margin: 0 auto 24px;
-      background: linear-gradient(180deg, rgba(255,255,255,0.97), rgba(255,249,240,0.98));
+      background: var(--paper);
       box-shadow: 0 22px 50px rgba(0,0,0,0.12);
       position: relative;
       overflow: hidden;
@@ -118,11 +118,11 @@
       font-family: "Cinzel", serif;
       font-size: 1.1rem;
       letter-spacing: 0.02rem;
-      font-weight: 700;
+      font-weight: 600;
     }
     .section-title small {
       font-size: 0.8rem;
-      font-family: "Inter", sans-serif;
+      font-family: system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
       letter-spacing: 0;
       color: var(--muted);
     }
@@ -201,9 +201,9 @@
       flex: 0 0 auto;
       min-width: 78px;
       text-align: right;
-      font-family: "Oooh Baby", cursive;
+      font-family: "Cinzel", serif;
       font-size: 1.25rem;
-      font-weight: 400;
+      font-weight: 600;
       line-height: 1;
       color: #111;
       background: rgba(255,255,255,0.78);
@@ -227,13 +227,13 @@
       gap: 8px;
       color: #977539;
       font-size: 0.7rem;
-      font-weight: 700;
+      font-weight: 600;
     }
     .size-prices strong {
       color: #111;
-      font-family: "Oooh Baby", cursive;
-      font-weight: 400;
-      font-size: 1.15rem;
+      font-family: "Cinzel", serif;
+      font-weight: 600;
+      font-size: 1.25rem;
       line-height: 0.8;
     }
 
@@ -277,10 +277,10 @@
       gap: 16px;
     }
     .inline-banner strong {
-      font-family: "Oooh Baby", cursive;
-      font-size: 1.4rem;
+      font-family: "Cinzel", serif;
+      font-size: 1.25rem;
       color: #111;
-      font-weight: 400;
+      font-weight: 600;
     }
 
     /* ── PASTELERÍA HEADER ── */
@@ -329,7 +329,7 @@
     .social-copy p {
       margin: 0;
       color: #9c7225;
-      font-family: "Inter", sans-serif;
+      font-family: system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
       font-weight: 800;
       font-size: 0.95rem;
       letter-spacing: 0.04rem;

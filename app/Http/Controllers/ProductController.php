@@ -6,6 +6,7 @@ use App\Http\Requests\Product\StoreProductRequest;
 use App\Http\Requests\Product\UpdateProductRequest;
 use App\Http\Resources\ProductResource;
 use App\Models\Product;
+use App\Services\GenerateMenuPdfService;
 
 class ProductController extends Controller
 {
@@ -30,16 +31,25 @@ class ProductController extends Controller
         return new ProductResource($product);
     }
 
-    public function update(UpdateProductRequest $request, Product $product)
+    public function update(UpdateProductRequest $request, Product $product, GenerateMenuPdfService $pdfService)
     {
         $product->update($request->validated());
+
+        foreach ($product->menus as $menu) {
+            $pdfService->handle($menu);
+        }
 
         return new ProductResource($product);
     }
 
-    public function destroy(Product $product)
+    public function destroy(Product $product, GenerateMenuPdfService $pdfService)
     {
+        $menus = $product->menus()->get();
         $product->delete();
+
+        foreach ($menus as $menu) {
+            $pdfService->handle($menu);
+        }
 
         return response()->noContent();
     }

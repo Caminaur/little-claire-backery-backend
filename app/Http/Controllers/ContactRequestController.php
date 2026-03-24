@@ -6,11 +6,18 @@ use App\Http\Requests\ContactRequest\StoreContactRequest;
 use App\Http\Requests\ContactRequest\UpdateContactRequest;
 use App\Http\Resources\ContactRequestResource;
 use App\Models\ContactRequest;
+use Illuminate\Support\Facades\Log;
 
 class ContactRequestController extends Controller
 {
     public function index()
     {
+        Log::info('ContactRequestController@index hit', [
+            'authenticated' => auth()->check(),
+            'user' => auth()->id(),
+            'guard' => auth()->getDefaultDriver(),
+        ]);
+
         return ContactRequestResource::collection(ContactRequest::latest()->get());
     }
 
