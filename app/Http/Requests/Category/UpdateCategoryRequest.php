@@ -17,11 +17,13 @@ class UpdateCategoryRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'sometimes|required|string|max:255',
-            'description' => 'nullable|string',
-            'image_url' => 'nullable|string',
-            'is_visible' => 'boolean',
-            'position' => 'integer',
+            'name'          => 'sometimes|required|string|max:255',
+            'description'   => 'nullable|string',
+            'image_url'     => 'nullable|string',
+            'is_visible'    => 'boolean',
+            'position'      => 'integer',
+            'price_display' => 'sometimes|in:auto,price_box,inline_banner',
+            'is_full_width' => 'sometimes|boolean',
         ];
     }
 }

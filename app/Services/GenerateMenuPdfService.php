@@ -65,11 +65,13 @@ class GenerateMenuPdfService
                 }
 
                 return [
-                    'id'          => $category->id,
-                    'name'        => $category->name,
-                    'description' => $category->description ?? null,
-                    'position'    => $category->pivot->position ?? null,
-                    'products'    => $products,
+                    'id'            => $category->id,
+                    'name'          => $category->name,
+                    'description'   => $category->description ?? null,
+                    'position'      => $category->pivot->position ?? null,
+                    'price_display' => $category->price_display ?? 'auto',
+                    'is_full_width' => (bool) ($category->is_full_width ?? false),
+                    'products'      => $products,
                 ];
             })
             ->filter()

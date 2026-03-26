@@ -443,15 +443,30 @@ $pages = [
     $catLower = mb_strtolower($category['name']);
     $catNorm  = strtr($catLower, ['á'=>'a','é'=>'e','í'=>'i','ó'=>'o','ú'=>'u','ñ'=>'n','ü'=>'u']);
 
-    // Layout detection
+    // Manual display overrides from admin settings
+    $priceDisplay = $category['price_display'] ?? 'auto';
+    $isFullWidth  = (bool) ($category['is_full_width'] ?? false);
+
+    // Layout detection (auto)
     $isSized      = !empty($products)
                     && count($products[0]['variants']) > 1
                     && $products[0]['variants'][0]['label'] !== null;
 
     $allPrices    = array_unique(array_map(fn($p) => $p['variants'][0]['price'] ?? 0, $products));
-    $uniformPrice = (count($allPrices) === 1 && count($products) >= 5)
-                    ? number_format((float) array_values($allPrices)[0], 0, ',', '.')
-                    : null;
+    $autoUniform  = (count($allPrices) === 1 && count($products) >= 4);
+
+    // price_box override: force uniform box even when auto-detection wouldn't trigger
+    if ($priceDisplay === 'price_box' && !$autoUniform) {
+        $rawPrice    = $products[0]['variants'][0]['price'] ?? null;
+        $autoUniform = $rawPrice !== null;
+        if ($autoUniform) {
+            $allPrices = [number_format((float) $rawPrice, 0, ',', '.')];
+        }
+    }
+
+    $uniformPrice     = $autoUniform
+                        ? number_format((float) array_values($allPrices)[0], 0, ',', '.')
+                        : null;
     $uniformHasDesc   = $uniformPrice && !empty(array_filter($products, fn($p) => !empty($p['description'])));
     $uniformLabel     = str_contains($catNorm, 'bebida') ? 'TODAS' : 'TODOS';
 
@@ -461,6 +476,18 @@ $pages = [
     $isFrios      = str_contains($catNorm, 'frios') || str_contains($catNorm, 'frio');
     $isPasteleria = str_contains($catNorm, 'pasteleria');
     $isCold       = $isFrios || $isHeladas;
+
+    // inline_banner override: render all products as full-width banners
+    $useInlineBanner = ($priceDisplay === 'inline_banner') || $isFullWidth;
+    // If manual inline_banner is active, skip other layouts
+    if ($useInlineBanner) {
+        $isSized      = false;
+        $uniformPrice = null;
+        $isCalientes  = false;
+        $isHeladas    = false;
+        $isJugos      = false;
+        $isPasteleria = false;
+    }
 
     // Icons only on page 1
     $showIcon = ($pageIndex === 0);
@@ -484,9 +511,30 @@ $pages = [
   @endphp
 
   {{-- ════════════════════════════════════════════════
+       INLINE BANNER (manual override: price_display = inline_banner o is_full_width)
+  ════════════════════════════════════════════════ --}}
+  @if($useInlineBanner)
+
+  <section class="menu-section">
+    <h2 class="section-title">{{ strtoupper($category['name']) }}
+      @if(!empty($category['description']))
+        <small>{{ $category['description'] }}</small>
+      @endif
+    </h2>
+    <div class="simple-list" style="gap:6px;">
+      @foreach($products as $product)
+      <div class="inline-banner">
+        <span style="font-weight:800;font-size:0.88rem;">{{ $product['name'] }}</span>
+        <strong>$ {{ number_format((float) ($product['variants'][0]['price'] ?? 0), 0, ',', '.') }}</strong>
+      </div>
+      @endforeach
+    </div>
+  </section>
+
+  {{-- ════════════════════════════════════════════════
        JUGOS NATURALES + LICUADOS banner
   ════════════════════════════════════════════════ --}}
-  @if($isJugos)
+  @elseif($isJugos)
 
   <section class="menu-section">
     <h2 class="section-title">{{ strtoupper($category['name']) }}</h2>

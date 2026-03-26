@@ -11,10 +11,11 @@ class Category extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'description', 'image_url', 'is_visible', 'position'];
+    protected $fillable = ['name', 'description', 'image_url', 'is_visible', 'position', 'price_display', 'is_full_width'];
 
     protected $casts = [
-        'is_visible' => 'boolean'
+        'is_visible'   => 'boolean',
+        'is_full_width' => 'boolean',
     ];
 
     public function menus(): BelongsToMany
