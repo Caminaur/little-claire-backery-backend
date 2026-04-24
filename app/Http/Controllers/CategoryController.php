@@ -2,19 +2,25 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Resources\CategoryResource;
-use App\Models\Category;
 use App\Http\Requests\Category\StoreCategoryRequest;
 use App\Http\Requests\Category\UpdateCategoryRequest;
+use App\Http\Requests\Category\UploadCategoryImageRequest;
+use App\Http\Resources\CategoryResource;
+use App\Models\Category;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class CategoryController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        return CategoryResource::collection(
-            Category::query()->orderBy('position')->paginate(20)
-        );
+        $query = Category::query()->orderBy('position');
+
+        if ($search = $request->query('search')) {
+            $query->where('name', 'like', "%{$search}%");
+        }
+
+        return CategoryResource::collection($query->paginate(20));
     }
 
     public function store(StoreCategoryRequest $request)
@@ -55,6 +61,18 @@ class CategoryController extends Controller
         }
 
         $category->update($data);
+
+        return new CategoryResource($category);
+    }
+
+    public function uploadImage(UploadCategoryImageRequest $request, Category $category)
+    {
+        if ($category->image_url && str_starts_with($category->image_url, 'storage/')) {
+            Storage::disk('public')->delete(substr($category->image_url, strlen('storage/')));
+        }
+
+        $path = $request->file('image')->store('categories', 'public');
+        $category->update(['image_url' => 'storage/' . $path]);
 
         return new CategoryResource($category);
     }

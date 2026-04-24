@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ContactRequestController;
+use App\Http\Controllers\EventReservationController;
 use App\Http\Controllers\MenuController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProductVariantController;
@@ -28,6 +29,7 @@ Route::prefix('menus/{menu}')->group(function () {
 });
 
 Route::post('contact-requests', [ContactRequestController::class, 'store'])->middleware('throttle:10,1');
+Route::post('event-reservations', [EventReservationController::class, 'store'])->middleware('throttle:10,1');
 
 // --- Auth ---
 Route::prefix('admin')->group(function () {
@@ -52,7 +54,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('promotions/{promotion}/products/{product}', [PromotionProductController::class, 'destroy']);
     Route::apiResource('menus', MenuController::class)->only(['store', 'update', 'destroy']);
 
+    Route::post('products/{product}/image', [ProductController::class, 'uploadImage']);
+    Route::post('categories/{category}/image', [CategoryController::class, 'uploadImage']);
+
     Route::apiResource('contact-requests', ContactRequestController::class)->only(['index', 'show', 'update', 'destroy']);
+    Route::apiResource('event-reservations', EventReservationController::class)->except(['store']);
 
     Route::prefix('menus/{menu}')->group(function () {
         Route::post('categories', [MenuCategoryController::class, 'store']);

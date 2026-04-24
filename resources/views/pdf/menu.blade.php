@@ -25,7 +25,7 @@
       background: #ece7dc;
       color: var(--ink);
       font-family: system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
-      font-size: 16px;
+      font-size: 17.5px;
     }
 
     img { max-width: 100%; display: block; }
@@ -40,16 +40,15 @@
     /* ── PAGE ── */
     .menu-page {
       width: 210mm;
-      height: 297mm;
+      min-height: 297mm;
       margin: 0 auto 24px;
       background: var(--paper);
       box-shadow: 0 22px 50px rgba(0,0,0,0.12);
       position: relative;
-      overflow: hidden;
     }
 
     .page-frame {
-      height: 100%;
+      min-height: 297mm;
       padding: 13mm;
       position: relative;
       display: flex;
@@ -105,12 +104,17 @@
       align-items: center;
       gap: 16px;
     }
-    .logo { width: 220px; max-width: 100%; justify-self: center; }
+    .logo { width: 240px; max-width: 100%; justify-self: center; }
     .logo-line { width: 100%; height: auto; display: block; }
     .logo-line--flip { transform: scaleX(-1); }
 
     /* ── SECTIONS ── */
-    .menu-section { position: relative; z-index: 1; }
+    .menu-section {
+      position: relative;
+      z-index: 1;
+      break-inside: avoid;
+      page-break-inside: avoid;
+    }
 
     .section-title {
       margin:5px 0;
@@ -130,29 +134,29 @@
     .divider { display: inline-block; padding: 0 6px; }
 
     /* ── GRID / COLUMNS ── */
-    .columns { display: grid; gap: 24px; }
+    .columns { display: grid; gap: 26px; }
     .two-columns   { grid-template-columns: 1fr 1fr; }
     .three-columns { grid-template-columns: repeat(3, 1fr); }
-    .equal-gap     { gap: 28px; }
+    .equal-gap     { gap: 30px; }
 
-    .catalog-grid         { display: grid; gap: 18px; }
+    .catalog-grid         { display: grid; gap: 20px; }
     .catalog-grid--three  { grid-template-columns: repeat(3, 1fr); }
-    .catalog-grid--prices { gap: 20px; }
+    .catalog-grid--prices { gap: 22px; }
 
     .item-list, .simple-list, .plain-list {
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 11px;
     }
-    .compact-list { gap: 14px; }
-    .paired-list  { gap: 14px; }
+    .compact-list { gap: 15px; }
+    .paired-list  { gap: 15px; }
 
     /* ── MENU ITEM ── */
     .menu-item {
       display: flex;
       align-items: flex-start;
       justify-content: space-between;
-      gap: 14px;
+      gap: 15px;
     }
     .menu-item--single-line { align-items: center; }
     .no-icon { gap: 0; }
@@ -160,7 +164,7 @@
     .item-main {
       display: flex;
       align-items: flex-start;
-      gap: 10px;
+      gap: 11px;
       min-width: 0;
       flex: 1;
     }
@@ -188,18 +192,18 @@
 
     /* ── ICON ── */
     .item-icon {
-      width: 32px;
-      height: 32px;
-      flex: 0 0 32px;
+      width: 38px;
+      height: 38px;
+      flex: 0 0 38px;
       display: grid;
       place-items: center;
     }
-    .item-icon img { width: 32px; height: 32px; object-fit: contain; }
+    .item-icon img { width: 38px; height: 38px; object-fit: contain; }
 
     /* ── PRICE TAG ── */
     .price-tag {
       flex: 0 0 auto;
-      min-width: 78px;
+      min-width: 86px;
       text-align: right;
       font-family: "Cinzel", serif;
       font-size: 1.25rem;
@@ -217,8 +221,8 @@
       flex: 0 0 auto;
       display: flex;
       flex-direction: column;
-      gap: 5px;
-      min-width: 100px;
+      gap: 6px;
+      min-width: 110px;
       margin-top: 1px;
     }
     .size-prices span {
@@ -245,18 +249,18 @@
     }
     .grow { flex: 1; }
     .price-box {
-      flex: 0 0 160px;
-      margin-top: 18px;
+      flex: 0 0 174px;
+      margin-top: 20px;
       border-left: 2px solid var(--gold);
       border-right: 2px solid var(--gold);
-      padding: 18px 16px;
+      padding: 20px 18px;
       text-align: center;
       color: #8d6320;
       font-family: "Cinzel", serif;
     }
     .price-box span   { display: block; font-size: 1rem; font-weight: 700; letter-spacing: 0.04rem; }
     .price-box strong { display: block; margin-top: 4px; font-size: 1.7rem; font-weight: 600; }
-    .price-box--tall  { align-self: center; min-height: 180px; display: grid; align-content: center; }
+    .price-box--tall  { align-self: center; min-height: 196px; display: grid; align-content: center; }
 
     /* Plain text list (Bebidas, Tés) */
     .plain-list p, .inline-banner span, .section-note {
@@ -319,8 +323,8 @@
     }
     .footer-social { display: flex; align-items: center; gap: 12px; }
     .qr-code {
-      width: 62px;
-      height: 62px;
+      width: 70px;
+      height: 70px;
       object-fit: cover;
       background: white;
       padding: 4px;
@@ -372,9 +376,9 @@
         height: 297mm;
         margin: 0;
         box-shadow: none;
+        overflow: hidden;
         page-break-after: always;
         break-after: page;
-        overflow: hidden;
       }
 
       .menu-page:last-child {
@@ -394,17 +398,80 @@
 
 @php
 /**
- * Grupos de categorías por página (basado en el diseño HTML original):
- *   Página 1 (índices 0-2): Taza Pequeña, Cafés Mediana/Grande, Cafés Fríos
- *   Página 2 (índices 3-7): Bebidas, Bebidas Calientes, Bebidas Heladas, Té en Hebras, Jugos
- *   Página 3 (índices 8+):  Pastelería, Salado
+ * Agrupación automática de categorías por página.
+ * Estima la altura de cada sección y abre una página nueva cuando el contenido
+ * supera el espacio disponible. Sin asignación manual de página.
+ *
+ * Presupuesto por página (mm):
+ *   A4 = 297mm, padding vertical = 13mm×2 = 26mm → interior = 271mm
+ *   Cabecera (logo band) ≈ 45mm, pie ≈ 22mm → contenido disponible ≈ 204mm
+ *   Página 1: ~12mm menos por el título "MENÚ"
+ *   Se usa un margen de seguridad conservador para evitar overflow en print.
  */
-$allCategories = $data['categories'];
-$pages = [
-    array_slice($allCategories, 0, 3),
-    array_slice($allCategories, 3, 5),
-    array_slice($allCategories, 8),
-];
+$allCategories     = $data['categories'];
+$PAGE_BUDGET       = 195;
+$FIRST_PAGE_BUDGET = 183;
+
+$pages       = [];
+$currentPage = [];
+$currentH    = 0;
+$budget      = $FIRST_PAGE_BUDGET;
+
+foreach ($allCategories as $category) {
+    $products = $category['products'];
+    $count    = count($products);
+    if ($count === 0) continue;
+
+    $catNorm     = strtr(mb_strtolower($category['name']),
+                     ['á'=>'a','é'=>'e','í'=>'i','ó'=>'o','ú'=>'u','ñ'=>'n','ü'=>'u']);
+    $priceDisplay = $category['price_display'] ?? 'auto';
+    $isFullWidth  = (bool) ($category['is_full_width'] ?? false);
+
+    $isSized      = count($products[0]['variants']) > 1
+                    && $products[0]['variants'][0]['label'] !== null;
+    $allPrices    = array_unique(array_map(fn($p) => $p['variants'][0]['price'] ?? 0, $products));
+    $isUniform    = count($allPrices) === 1
+                    && ($count >= 5 || $priceDisplay === 'price_box');
+    $uniformHasDesc = $isUniform
+                    && !empty(array_filter($products, fn($p) => !empty($p['description'])));
+
+    $isCalientes     = str_contains($catNorm, 'caliente');
+    $isHeladas       = str_contains($catNorm, 'helada');
+    $isJugos         = str_contains($catNorm, 'jugos');
+    $isPasteleria    = str_contains($catNorm, 'pasteleria');
+    $useInlineBanner = $priceDisplay === 'inline_banner' || $isFullWidth;
+
+    // [columns, mm per item row] — calibrado para font-size 17.5px con margen conservador
+    [$cols, $rowH] = match(true) {
+        $useInlineBanner                   => [1,  8],
+        $isJugos                           => [2, 13],
+        $isSized                           => [2, 20],
+        $isUniform && !$uniformHasDesc     => [3,  8],
+        $isUniform && $uniformHasDesc      => [1, 14],
+        $isCalientes                       => [3, 11],
+        $isHeladas                         => [2, 16],
+        $isPasteleria                      => [3, 14],
+        default                            => [2, 15],
+    };
+
+    $rows     = (int) ceil($count / $cols);
+    $sectionH = 16 + ($rows * $rowH); // 16mm = título de sección + separación inter-sección
+
+    if ($currentH + $sectionH > $budget && !empty($currentPage)) {
+        $pages[]     = $currentPage;
+        $currentPage = [];
+        $currentH    = 0;
+        $budget      = $PAGE_BUDGET;
+    }
+
+    $currentPage[] = $category;
+    $currentH     += $sectionH;
+}
+
+if (!empty($currentPage)) {
+    $pages[] = $currentPage;
+}
+$pages = array_values($pages);
 @endphp
 
 @foreach($pages as $pageIndex => $pageCategories)
@@ -452,16 +519,12 @@ $pages = [
                     && count($products[0]['variants']) > 1
                     && $products[0]['variants'][0]['label'] !== null;
 
-    $allPrices    = array_unique(array_map(fn($p) => $p['variants'][0]['price'] ?? 0, $products));
-    $autoUniform  = (count($allPrices) === 1 && count($products) >= 4);
+    $allPrices   = array_unique(array_map(fn($p) => $p['variants'][0]['price'] ?? 0, $products));
+    $autoUniform = (count($allPrices) === 1 && count($products) >= 5);
 
-    // price_box override: force uniform box even when auto-detection wouldn't trigger
-    if ($priceDisplay === 'price_box' && !$autoUniform) {
-        $rawPrice    = $products[0]['variants'][0]['price'] ?? null;
-        $autoUniform = $rawPrice !== null;
-        if ($autoUniform) {
-            $allPrices = [number_format((float) $rawPrice, 0, ',', '.')];
-        }
+    // price_box override: force uniform box if all prices equal but count < 5
+    if ($priceDisplay === 'price_box' && !$autoUniform && count($allPrices) === 1) {
+        $autoUniform = true;
     }
 
     $uniformPrice     = $autoUniform
@@ -479,14 +542,9 @@ $pages = [
 
     // inline_banner override: render all products as full-width banners
     $useInlineBanner = ($priceDisplay === 'inline_banner') || $isFullWidth;
-    // If manual inline_banner is active, skip other layouts
     if ($useInlineBanner) {
-        $isSized      = false;
-        $uniformPrice = null;
-        $isCalientes  = false;
-        $isHeladas    = false;
-        $isJugos      = false;
-        $isPasteleria = false;
+        $isSized = false; $isCalientes = false; $isHeladas = false;
+        $isJugos = false; $isPasteleria = false;
     }
 
     // Icons only on page 1

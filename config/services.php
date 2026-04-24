@@ -40,4 +40,14 @@ return [
         'npm' => env('BROWSERSHOT_NPM_PATH'),
         'chrome' => env('BROWSERSHOT_CHROME_PATH'),
     ],
+
+    'admin' => [
+        'email' => env('ADMIN_EMAIL', 'admin@example.com'),
+    ],
+
+    'whatsapp' => [
+        'token'           => env('WHATSAPP_TOKEN'),
+        'phone_number_id' => env('WHATSAPP_PHONE_NUMBER_ID'),
+        'to_number'       => env('WHATSAPP_TO_NUMBER'),
+    ],
 ];

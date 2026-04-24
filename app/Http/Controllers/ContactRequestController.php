@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\ContactRequestType;
 use App\Http\Requests\ContactRequest\StoreContactRequest;
 use App\Http\Requests\ContactRequest\UpdateContactRequest;
 use App\Http\Resources\ContactRequestResource;
@@ -23,7 +24,10 @@ class ContactRequestController extends Controller
 
     public function store(StoreContactRequest $request)
     {
-        $contactRequest = ContactRequest::create($request->validated());
+        $contactRequest = ContactRequest::create(array_merge(
+            $request->validated(),
+            ['type' => ContactRequestType::General]
+        ));
 
         return (new ContactRequestResource($contactRequest))->response()->setStatusCode(201);
     }
